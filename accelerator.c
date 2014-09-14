@@ -5,6 +5,10 @@
 #include <linux/sysfs.h>
 #include <linux/kobject.h>
 
+#define ADDRESS_STM 0xFC000000
+#define OFFSET_LWFPGASLAVES 0x03200000
+#define OFFSET_ACCELERATOR 0x00030000
+
 #define __MYATTR(_name, _mode, _show, _store) {                     \
 	.attr = {.name = __stringify(_name),                            \
 	         .mode = _mode },                                       \
@@ -12,9 +16,9 @@
 	.store  = _store,                                               \
 }
 
-static int in1 = 0;
-static int in2 = 0;
-static int res = 0;
+static unsigned int in1 = 0;
+static unsigned int in2 = 0;
+static unsigned int res = 0;
 
 static ssize_t in1_write(struct kobject        *kobj, 
 	                     struct kobj_attribute *attr,
@@ -54,6 +58,7 @@ static ssize_t in1_write(struct kobject        *kobj,
 	                     size_t                count)
 {
 	sscanf(buf, "%du", &in1);
+	*(unsigned int *)(ADDRESS_STM + OFFSET_LWFPGASLAVES + OFFSET_ACCELERATOR + 0) = in1;
 	printk(KERN_ALERT "Input 1: %d\n", in1);
 	return count;
 }
@@ -64,6 +69,7 @@ static ssize_t in2_write(struct kobject        *kobj,
 	                     size_t                count)
 {
 	sscanf(buf, "%du", &in2);
+	*(unsigned int *)(ADDRESS_STM + OFFSET_LWFPGASLAVES + OFFSET_ACCELERATOR + 1) = in2;
 	printk(KERN_ALERT "Input 2: %d\n", in2);
 	res = in1 + in2;
 	return count;
@@ -73,6 +79,7 @@ static ssize_t res_read(struct kobject        *kobj,
 	                    struct kobj_attribute *attr,
                         char                  *buf)
 {
+	res = *(unsigned int *)(ADDRESS_STM + OFFSET_LWFPGASLAVES + OFFSET_ACCELERATOR);
 	return sprintf(buf, "%d\n", res);
 }
 
