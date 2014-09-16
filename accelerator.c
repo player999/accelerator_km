@@ -98,12 +98,8 @@ static int accelerator_init(void)
 	if (retval)
 		kobject_put(accel_kobj);
 
-	printk(KERN_ALERT "Test!\n");
-	printk(KERN_ALERT "Physical address: %x\n", ADDRESS_STM + OFFSET_LWFPGASLAVES + 
-		OFFSET_ACCELERATOR);
 	dev_base = ADDRESS_STM + OFFSET_LWFPGASLAVES + OFFSET_ACCELERATOR;
 	virt_base = ioremap(dev_base, 16);
-	printk(KERN_ALERT "Virtual address: %x\n", (unsigned)dev_base);
 	printk(KERN_ALERT "Accelerator loaded.\n");
 	return retval;
 }
